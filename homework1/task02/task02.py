@@ -1,5 +1,5 @@
 """
-Module fibonacci is designed to check if the sequence is
+Task02 is designed to check if the sequence is
 a Fibonacci one.
 
 According to wikipedia https://en.wikipedia.org/wiki/Fibonacci_number
@@ -16,9 +16,7 @@ def check_fibonacci(data: Sequence) -> bool:
     given sequence is a Fibonacci sequence
 
     :param data: sequence of integer is needed to be check
-    :type data: Sequence[int]
     :return: if the given sequence is a Fibonacci sequence
-    :rtype: bool
     """
 
     # get number of sequence elements
