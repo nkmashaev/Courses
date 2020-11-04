@@ -14,15 +14,10 @@ def check_sum_of_four(a: List[int], b: List[int], c: List[int], d: List[int]) ->
     that A[i] + B[j] + C[k] + D[l] is zero
 
     :param a: first list of integer values
-    :type a: List[int]
     :param b: second list of integer values
-    :type b: List[int]
     :param c: third list of integer values
-    :type c: List[int]
     :param d: fourth list of integer values
-    :type d: List[int]
     :return: number of tuples (i, j, k, l) for which A[i] + B[j] + C[k] + D[l] condition is true
-    :rtype: int
     """
     counter = 0
 

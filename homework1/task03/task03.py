@@ -1,5 +1,5 @@
 """
-Module min_max is designed to find minimum and maximum values from an integer
+Taks03 is designed to find minimum and maximum values from an integer
 sequence that is given from file
 """
 from typing import Tuple
@@ -11,9 +11,7 @@ def find_maximum_and_minimum(file_name: str) -> Tuple[int, int]:
     Function should return a tuple with the max and min values
 
     :param file_name: Name of file with integer sequence
-    :type file_name: str
     :return: min and max values of sequence
-    :rtype: tuple
     """
 
     min_int = 0

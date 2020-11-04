@@ -17,11 +17,8 @@ def find_maximal_subarray_sum(nums: List[int], k: int) -> int:
     equal k, with maximal sum. The written function should return the sum of this sub-array
 
     :param nums: a list of integers numbers
-    :type nums: List[int]
     :param k: max subarray size
-    :type k: int
     :return: the sum of found subarray
-    :rtype: int
     """
     maximal_subarray_sum = nums[0]
     numb_of_elements = len(nums)
