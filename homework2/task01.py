@@ -10,8 +10,10 @@ The implementation of the first task. The first task consists of next problems^
 
 import os
 import string
+import unicodedata
+from collections import defaultdict
 from functools import cmp_to_key
-from typing import List
+from typing import Iterator, List, TextIO, Tuple
 
 
 def compare(word1: str, word2: str) -> int:
@@ -39,6 +41,51 @@ def compare(word1: str, word2: str) -> int:
             return 0
 
 
+def tokenize(in_file: TextIO) -> Iterator[Tuple[str, int]]:
+    """
+    Function tokenize split file data into tokens. Current implementation
+    recognizes "word", "whitespace" and "punctuation" ones. Each token consists
+    of type of token and toked data
+
+    :param in_file: file for tokenization
+    :return: Iterator of tokens.
+    """
+    buff = ""
+    char = ""
+    while True:
+        char = in_file.read(1)
+        if not char:
+            break
+        if unicodedata.category(char).startswith("P"):
+            if buff:
+                yield ("word", buff)
+                buff = ""
+            yield ("punctuation", char)
+            continue
+        if char in string.whitespace:
+            if buff:
+                yield ("word", buff)
+                buff = ""
+            yield ("whitespace", char)
+            continue
+        buff += char
+    if buff:
+        yield ("word", buff)
+
+
+def read_char(in_file: TextIO) -> Iterator[str]:
+    """
+    Accepts in_file and read it one by one
+
+    :return: Iterator of file chars
+    """
+    while True:
+        char = in_file.read(1)
+        if not char:
+            break
+        yield char
+
+
 def get_longest_diverse_words(file_path: str) -> List[str]:
     """
     This function is designed to search ten longest words
@@ -47,12 +94,12 @@ def get_longest_diverse_words(file_path: str) -> List[str]:
     :param file_path: Data file name
     :return: list of words
     """
-    word_list = []
-    with open(file_path, "r") as in_file:
-        for line in in_file:
-            word_list = word_list + [
-                bytes(word, "utf-8").decode("unicode_escape") for word in line.split()
-            ]
+    word_set = set()
+    with open(file_path, "r", encoding="unicode_escape") as in_file:
+        for token in tokenize(in_file):
+            if token[0] == "word":
+                word_set.add(token[1])
+    word_list = sorted(list(word_set))
     word_list.sort(key=cmp_to_key(compare))
     return word_list[:10]
 
@@ -64,26 +111,11 @@ def get_rarest_char(file_path: str) -> str:
     :param file_path: Data file name
     :return: rarest symbol
     """
-    freq_dict = {}
-    buff = ""
-    with open(file_path, "r") as in_file:
-        for line in in_file:
-            for char in line:
-                buff = buff + char
-                if buff.startswith("\\"):
-                    if len(buff) == 6:
-                        buff = bytes(buff, "utf-8").decode("unicode_escape")
-                        if buff in freq_dict:
-                            freq_dict[buff] += 1
-                        else:
-                            freq_dict[buff] = 1
-                        buff = ""
-                else:
-                    if buff in freq_dict:
-                        freq_dict[buff] += 1
-                    else:
-                        freq_dict[buff] = 1
-                    buff = ""
+    freq_dict = defaultdict(int)
+    with open(file_path, "r", encoding="unicode_escape") as in_file:
+        for char in read_char(in_file):
+            freq_dict[char] += 1
+
     rarest, freq = None, 0
     for key, val in freq_dict.items():
         if rarest is None or freq > val:
@@ -101,21 +133,10 @@ def count_punctuation_char(file_path: str) -> int:
     :return: number of punctuation chars
     """
     numb = 0
-    buff = ""
-    with open(file_path, "r") as in_file:
-        for line in in_file:
-            for char in line:
-                buff = buff + char
-                if buff.startswith("\\"):
-                    if len(buff) == 6:
-                        buff = bytes(buff, "utf-8").decode("unicode_escape")
-                        if buff in string.punctuation:
-                            numb += 1
-                        buff = ""
-                else:
-                    if buff in string.punctuation:
-                        numb += 1
-                    buff = ""
+    with open(file_path, "r", encoding="unicode_escape") as in_file:
+        for token in tokenize(in_file):
+            if token[0] == "punctuation":
+                numb += 1
     return numb
 
 
@@ -127,21 +148,10 @@ def count_non_ascii_chars(file_path: str) -> int:
     :return: number of non ascii char
     """
     non_ascii_numb = 0
-    buff = ""
-    with open(file_path, "r") as in_file:
-        for line in in_file:
-            for char in line:
-                buff = buff + char
-                if buff.startswith("\\"):
-                    if len(buff) == 6:
-                        buff = bytes(buff, "utf-8").decode("unicode_escape")
-                        if buff not in string.printable:
-                            non_ascii_numb += 1
-                        buff = ""
-                else:
-                    if buff not in string.printable:
-                        non_ascii_numb += 1
-                    buff = ""
+    with open(file_path, "r", encoding="unicode_escape") as in_file:
+        for char in read_char(in_file):
+            if char not in string.printable:
+                non_ascii_numb += 1
     return non_ascii_numb
 
 
@@ -152,29 +162,12 @@ def get_most_common_non_ascii_char(file_path: str) -> str:
     :param file_path: Data file name
     :return: non ascii char
     """
-    freq_dict = {}
-    buff = ""
-    with open(file_path, "r") as in_file:
-        for line in in_file:
-            for char in line:
-                buff = buff + char
-                if buff.startswith("\\"):
-                    if len(buff) == 6:
-                        buff = bytes(buff, "utf-8").decode("unicode_escape")
-                        if buff not in string.printable:
-                            if buff in freq_dict:
-                                freq_dict[buff] += 1
-                            else:
-                                freq_dict[buff] = 1
-                        buff = ""
-                else:
-                    if buff not in string.printable:
-                        if buff in freq_dict:
-                            freq_dict[buff] += 1
-                        else:
-                            freq_dict[buff] = 1
-                    buff = ""
-    # print(freq_dict)
+    freq_dict = defaultdict(int)
+    with open(file_path, "r", encoding="unicode_escape") as in_file:
+        for char in read_char(in_file):
+            if not char in string.printable:
+                freq_dict[char] += 1
+
     common, freq = None, 0
     for key, val in freq_dict.items():
         if freq < val:

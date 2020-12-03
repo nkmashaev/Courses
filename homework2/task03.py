@@ -5,6 +5,7 @@ first element is from the first list, the second is from the
 second one and so one.
 """
 
+from itertools import product
 from typing import Any, List
 
 
@@ -52,6 +53,21 @@ def recursive_combine(
             )
 
 
+def combine_with_itertools(*args: List[Any]) -> List[List]:
+    """
+    Takes K lists as arguments and returns all possible lists of K
+    items where the first element is from the first list,
+    the second is from the second and so one.
+
+    The base of that implemetation is itertools.product function
+
+    :param args: list containing K lists
+    :return: list of lists
+    """
+    return [list(x) for x in product(*args)]
+
+
 if __name__ == "__main__":
     print(combinations([1, 2], [3, 4]))
     print(combinations([1, 2, 3], [4, 5, 6], [7, 8, 9, 10]))
+    print(combine_with_itertools([1, 2], [3, 4]))

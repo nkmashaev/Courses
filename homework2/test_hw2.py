@@ -1,11 +1,12 @@
 import os
 import string
+from unittest import mock
 
 import pytest
 
 import homework2.task01 as task01
-from homework2.task02 import major_and_minor_elem
-from homework2.task03 import combinations
+import homework2.task02 as task02
+import homework2.task03 as task03
 from homework2.task04 import cache
 from homework2.task05 import custom_range
 
@@ -17,16 +18,16 @@ from homework2.task05 import custom_range
         (
             os.path.join("test_data_files", "data.txt"),
             [
-                "Bevölkerungsabschub,",
-                "Kollektivschuldiger,",
-                "résistance-Bewegungen,",
+                "Bevölkerungsabschub",
+                "Kollektivschuldiger",
                 "unmißverständliche",
-                "Schicksalsfiguren;",
-                "politisch-strategischen",
-                "Entscheidungsschlacht.",
                 "Werkstättenlandschaft",
-                "Gewissenserforschung,",
-                "Werkstättenlandschaft",
+                "Selbstverständlich",
+                "Schicksalsfiguren",
+                "Verfassungsverletzungen",
+                "Entscheidungsschlacht",
+                "Einzelwissenschaften",
+                "Gewissenserforschung",
             ],
         ),
     ],
@@ -76,7 +77,7 @@ def test_get_rarest_char(file_path, expected_range):
 @pytest.mark.parametrize(
     ["file_path", "expected_range"],
     [
-        (os.path.join("test_data_files", "data.txt"), 5305),
+        (os.path.join("test_data_files", "data.txt"), 5475),
     ],
 )
 def test_count_punctuation_char(file_path, expected_range):
@@ -124,7 +125,20 @@ def test_get_most_common_non_ascii_char(file_path, expected_range):
     ],
 )
 def test_major_and_minor_elem(input, expected_range):
-    actual_result = major_and_minor_elem(input)
+    actual_result = task02.major_and_minor_elem(input)
+    assert actual_result == expected_range
+
+
+@pytest.mark.parametrize(
+    ["input", "expected_range"],
+    [
+        ([3, 2, 3], (3, 2)),
+        ([2, 2, 1, 1, 1, 2, 2], (2, 1)),
+        ([3, 3, 3, 2, 1, 2, 3], (3, 1)),
+    ],
+)
+def test_major_and_minor_elem_2(input, expected_range):
+    actual_result = task02.major_and_minor_elem_2(input)
     assert actual_result == expected_range
 
 
@@ -140,26 +154,34 @@ def test_major_and_minor_elem(input, expected_range):
     ],
 )
 def test_combinations(input, expected_range):
-    actual_result = combinations(*input)
+    actual_result = task03.combinations(*input)
+    assert actual_result == expected_range
+
+
+@pytest.mark.parametrize(
+    ["input", "expected_range"],
+    [
+        ([[1, 2], [3, 4]], [[1, 3], [1, 4], [2, 3], [2, 4]]),
+        (
+            [["a", "b"], ["c"], ["d", "e"]],
+            [["a", "c", "d"], ["a", "c", "e"], ["b", "c", "d"], ["b", "c", "e"]],
+        ),
+    ],
+)
+def test_combinations(input, expected_range):
+    actual_result = task03.combine_with_itertools(*input)
     assert actual_result == expected_range
 
 
 # task04 tester
 def test_cache():
-    some = 100, 200
-
-    def test_func1(a, b):
-        return a ** b ** 2
-
-    cache_func1 = cache(test_func1)
-    val_1 = cache_func1(*some)
-    val_2 = cache_func1(*some)
-    assert val_1 is val_2
-
-    cache_func2 = cache(range)
-    val_1 = cache_func2(*some)
-    val_2 = cache_func2(*some)
-    assert val_1 is val_2
+    m = mock.Mock()
+    n = m
+    m = cache(m)
+    m(1, 2, 3, [4, 5, 6], key=2)
+    m(1, 2, 3, [4, 5, 6], key=2)
+    assert n.call_count == 1
+    assert n.call_args_list == [((1, 2, 3, [4, 5, 6]), {"key": 2})]
 
 
 # task05 tester

@@ -9,29 +9,23 @@ always exist in the array
 """
 
 
+from collections import defaultdict
 from typing import List, Tuple
 
 
 def major_and_minor_elem(inp: List) -> Tuple[int, int]:
     """
-    The implementation of the second task problem. Find the most and
-    the least common elements and return tuple consist of them
+    The implementation of the second task problem using defaultdict.
+    Find the most and the least common elements and return tuple consist of them
 
     :param inp: array of elements
     :return: most and least common elements tuple
     """
-    numbers_dict = {}
+    numbers_dict = defaultdict(int)
 
     for x in inp:
-        if x in numbers_dict:
-            numbers_dict[x] += 1
-        else:
-            numbers_dict.update({x: 0})
+        numbers_dict[x] += 1
 
-    min_numb = 0
-    maj_numb = 0
-    minor = 0
-    major = 0
     is_first = True
     for key, val in numbers_dict.items():
         if is_first or min_numb > val:
@@ -41,6 +35,44 @@ def major_and_minor_elem(inp: List) -> Tuple[int, int]:
             maj_numb = val
             major = key
         is_first = False
+    return major, minor
+
+
+def major_and_minor_elem_2(inp: List) -> Tuple[int, int]:
+    """
+    The implementation of the second task problem using list sort.
+    Find the most and the least common elements and return tuple consist of them
+
+    :param inp: array of elements
+    :return: most and least common elements tuple
+    """
+
+    sort_list = sorted(inp)
+    min_numb = 1
+    maj_numb = 1
+    curr_el = sort_list[0]
+    minor = curr_el
+    major = curr_el
+    curr_numb = 1
+
+    for x in sort_list[1:]:
+        if x != curr_el:
+            if min_numb > curr_numb:
+                min_numb = curr_numb
+                minor = curr_el
+            if maj_numb < curr_numb:
+                max_numb = curr_numb
+                major = curr_el
+            curr_numb = 0
+            curr_el = x
+        curr_numb += 1
+
+    if min_numb > curr_numb:
+        min_numb = curr_numb
+        minor = curr_el
+    if maj_numb < curr_numb:
+        max_numb = curr_numb
+        major = curr_el
     return major, minor
 
 
