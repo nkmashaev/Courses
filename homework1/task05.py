@@ -8,13 +8,15 @@ Examples:
     result = 16
 """
 
+from collections import deque
 from typing import List
 
 
 def find_maximal_subarray_sum(nums: List[int], k: int) -> int:
     """
     Function find_maximal_subarray_sum is designed to find a sub-array with length less
-    equal k, with maximal sum. The written function should return the sum of this sub-array
+    equal k, with maximal sum. The written function should return the sum of this sub-array.
+    O(n*k)
 
     :param nums: a list of integers numbers
     :param k: max subarray size
@@ -34,3 +36,38 @@ def find_maximal_subarray_sum(nums: List[int], k: int) -> int:
             maximal_subarray_sum = temp_max
 
     return maximal_subarray_sum
+
+
+def find_maximal_subarray_sum_deque(nums: List[int], k: int) -> int:
+    """
+    Function find_maximal_subarray_sum is designed to find a sub-array with length less
+    equal k, with maximal sum. The written function should return the sum of this sub-array.
+    O(n)
+
+    :param nums: a list of integers numbers
+    :param k: max subarray size
+    :return: the sum of found subarray
+    """
+    if k == 1:
+        return max(nums)
+
+    q = deque()
+    q.append(nums[0])
+    curr_sum = nums[0]
+    max_sum = curr_sum
+    for x in nums[1:]:
+        first = 0
+        if len(q) == k:
+            first = q.popleft()
+        if curr_sum + x - first >= curr_sum:
+            q.append(x)
+            curr_sum += x - first
+        else:
+            q.clear()
+            q.append(x)
+            if curr_sum > max_sum:
+                max_sum = curr_sum
+            curr_sum = x
+    if curr_sum > max_sum:
+        max_sum = curr_sum
+    return max_sum

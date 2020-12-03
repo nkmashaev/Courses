@@ -14,9 +14,6 @@ def find_maximum_and_minimum(file_name: str) -> Tuple[int, int]:
     :return: min and max values of sequence
     """
 
-    min_int = 0
-    max_int = 0
-
     # open file with name file_name and attached it to in_file
     with open(file_name) as in_file:
         # Initializing min and max values with the first
