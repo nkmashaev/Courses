@@ -2,11 +2,12 @@ import os
 import string
 
 import pytest
-import task01
-from task02 import major_and_minor_elem
-from task03 import combinations
-from task04 import cache
-from task05 import custom_range
+
+import homework2.task01 as task01
+from homework2.task02 import major_and_minor_elem
+from homework2.task03 import combinations
+from homework2.task04 import cache
+from homework2.task05 import custom_range
 
 
 # task01 get_longest_diverse_words tester
@@ -31,6 +32,8 @@ from task05 import custom_range
     ],
 )
 def test_get_longest_diverse_words(file_path, expected_range):
+    if not os.path.exists(file_path):
+        file_path = os.path.join("homework2", file_path)
     actual_result = task01.get_longest_diverse_words(file_path)
     assert actual_result == expected_range
 
@@ -63,6 +66,8 @@ def test_get_longest_diverse_words(file_path, expected_range):
     ],
 )
 def test_get_rarest_char(file_path, expected_range):
+    if not os.path.exists(file_path):
+        file_path = os.path.join("homework2", file_path)
     actual_result = task01.get_rarest_char(file_path)
     assert actual_result in expected_range
 
@@ -75,6 +80,8 @@ def test_get_rarest_char(file_path, expected_range):
     ],
 )
 def test_count_punctuation_char(file_path, expected_range):
+    if not os.path.exists(file_path):
+        file_path = os.path.join("homework2", file_path)
     actual_result = task01.count_punctuation_char(file_path)
     assert actual_result == expected_range
 
@@ -87,6 +94,8 @@ def test_count_punctuation_char(file_path, expected_range):
     ],
 )
 def test_count_non_ascii_chars(file_path, expected_range):
+    if not os.path.exists(file_path):
+        file_path = os.path.join("homework2", file_path)
     actual_result = task01.count_non_ascii_chars(file_path)
     assert actual_result == expected_range
 
@@ -99,6 +108,8 @@ def test_count_non_ascii_chars(file_path, expected_range):
     ],
 )
 def test_get_most_common_non_ascii_char(file_path, expected_range):
+    if not os.path.exists(file_path):
+        file_path = os.path.join("homework2", file_path)
     actual_result = task01.get_most_common_non_ascii_char(file_path)
     assert actual_result in expected_range
 

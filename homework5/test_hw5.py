@@ -2,8 +2,9 @@ import datetime
 import functools
 
 import pytest
-import task01
-from task02 import print_result
+
+import homework5.task01 as task01
+from homework5.task02 import print_result
 
 
 # task01 tests

@@ -1,10 +1,11 @@
 from typing import List
 
 import pytest
-from task01 import cache
-from task02 import perform_calculate
-from task03 import make_filter
-from task04 import is_armstrong
+
+from homework3.task01 import cache
+from homework3.task02 import perform_calculate
+from homework3.task03 import make_filter
+from homework3.task04 import is_armstrong
 
 
 # task01 tests
