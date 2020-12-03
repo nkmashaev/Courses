@@ -4,11 +4,10 @@ a function that accepts another function as an argument. Then
 it should return such a function, so the every call to initial
 one should be cached
 """
-from collections import Callable
-from typing import Any, List
+from typing import Any, Callable, List
 
 
-def cache(func: Callable) -> Callable:
+def cache(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
     """
     The function cache accepts another function as an
     argument and return such a function, so the every
@@ -17,9 +16,10 @@ def cache(func: Callable) -> Callable:
     :param func: function to cache
     :return: function that cached every call to initial one
     """
-    func_result = {}
+    func_res = []
+    func_arg = []
 
-    def action(*argv: List[Any]) -> Any:
+    def action(*args: Any, **kwargs: Any) -> Any:
         """
         The implementation of function that save initial function
         and cache every call to it
@@ -27,10 +27,15 @@ def cache(func: Callable) -> Callable:
         :param argv: arguments of the original function
         :return: cached result
         """
-        key = tuple(argv)
-        if key not in func_result:
-            func_result[key] = func(*key)
-        return func_result[key]
+        given_arg = (args, kwargs)
+        for curr_arg, res in zip(func_arg, func_res):
+            if curr_arg == given_arg:
+                return res
+
+        res = func(*given_arg[0], **given_arg[1])
+        func_res.append(res)
+        func_arg.append(given_arg)
+        return res
 
     return action
 
