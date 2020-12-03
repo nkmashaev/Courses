@@ -3,11 +3,12 @@ from collections import Sequence
 from typing import List, Tuple
 
 import pytest
-from sample_project.calculator.calc import check_power_of_2
-from task02.task02 import check_fibonacci
-from task03.task03 import find_maximum_and_minimum
-from task04.task04 import check_sum_of_four
-from task05.task05 import find_maximal_subarray_sum
+
+from homework1.task01 import check_power_of_2
+from homework1.task02 import check_fibonacci
+from homework1.task03 import find_maximum_and_minimum
+from homework1.task04 import check_sum_of_four
+from homework1.task05 import find_maximal_subarray_sum
 
 
 # task1 tester
@@ -48,19 +49,30 @@ def test_check_fibonacci(data: Sequence, expected_result: bool):
 
 
 # task_tester3
+@pytest.fixture
+def task03_file():
+    test_file_name = os.path.join(".", ".test_task03")
+
+    yield test_file_name
+
+    if os.path.exists(test_file_name):
+        os.remove(test_file_name)
+
+
 @pytest.mark.parametrize(
-    ["file_name", "expected_result"],
+    ["file_data", "expected_result"],
     [
-        (os.path.join("test_data_files", "test1"), (1, 7)),
-        (os.path.join("test_data_files", "test2"), (1, 5)),
-        (os.path.join("test_data_files", "test3"), (26, 59)),
-        (os.path.join("test_data_files", "test4"), (1, 6)),
-        (os.path.join("test_data_files", "test5"), (3, 57)),
+        (["2", "4", "5", "7", "1", "2", "3", "6"], (1, 7)),
+        (["1", "2", "3", "4", "5"], (1, 5)),
+        (["31", "41", "59", "26", "41", "58"], (26, 59)),
+        (["5", "2", "4", "6", "1", "3"], (1, 6)),
+        (["3", "41", "52", "26", "38", "57", "9", "49"], (3, 57)),
     ],
 )
-def test_min_max(file_name: str, expected_result: Tuple[int, int]):
-    actual_result = find_maximum_and_minimum(file_name)
-
+def test_min_max(task03_file, file_data, expected_result):
+    with open(task03_file, "w") as test_file:
+        test_file.write("\n".join(file_data))
+    actual_result = find_maximum_and_minimum(task03_file)
     assert actual_result == expected_result
 
 

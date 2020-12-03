@@ -1,7 +1,8 @@
 import pytest
-from task01 import find_occurances
-from task02 import backspace_compare
-from task03 import tic_tac_toe_checker
+
+from homework7.task01 import find_occurances
+from homework7.task02 import backspace_compare
+from homework7.task03 import tic_tac_toe_checker
 
 
 # test task1

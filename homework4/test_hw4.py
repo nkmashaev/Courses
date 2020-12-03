@@ -2,11 +2,12 @@ import os
 from unittest.mock import patch
 
 import pytest
-import task04
-import task05
-from task01 import read_magic_numb
-from task02 import count_dots_on_i
-from task03 import my_precios_logger
+
+import homework4.task04 as task04
+import homework4.task05 as task05
+from homework4.task01 import read_magic_numb
+from homework4.task02 import count_dots_on_i
+from homework4.task03 import my_precios_logger
 
 # task01 tests
 test_task01_fname = os.path.join(".", "test_task01_data.txt")

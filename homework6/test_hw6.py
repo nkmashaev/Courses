@@ -1,8 +1,9 @@
 from collections import defaultdict
 
 import pytest
-from task01 import instances_counter
-from task02 import DeadlineError, Homework, HomeworkResult, Student, Teacher
+
+import homework6.task02 as task02
+from homework6.task01 import instances_counter
 
 
 # test task1
@@ -44,81 +45,81 @@ def test_origin_class_doc(user_class_decorated):
 
 # test task2
 def test_raising_error_if_not_hw_given():
-    student = Student("Mashaev", "Nikita")
+    student = task02.Student("Mashaev", "Nikita")
     with pytest.raises(TypeError, match="Error: Expected homework but unknown found!"):
-        HomeworkResult(student, "str instead of Homework", "solution")
+        task02.HomeworkResult(student, "str instead of Homework", "solution")
 
 
 def test_do_hw_deadline_exception():
-    student = Student("Mashaev", "Nikita")
-    expired_homework = Homework("Expired", 0)
-    with pytest.raises(DeadlineError, match="You are late"):
+    student = task02.Student("Mashaev", "Nikita")
+    expired_homework = task02.Homework("Expired", 0)
+    with pytest.raises(task02.DeadlineError, match="You are late"):
         student.do_homework(expired_homework, "solution")
 
 
 def test_do_hw_return_hw_res():
-    st = Student("Mashaev", "Nikita")
-    hw = Homework("Actual", 1)
+    st = task02.Student("Mashaev", "Nikita")
+    hw = task02.Homework("Actual", 1)
     hw_res = st.do_homework(hw, "done")
-    assert isinstance(hw_res, HomeworkResult)
+    assert isinstance(hw_res, task02.HomeworkResult)
     assert hw_res.solution == "done"
     assert hw_res.homework == hw
     assert hw_res.author == st
 
 
 def test_pass_check():
-    st = Student("Mashaev", "Nikita")
-    hw = Homework("Actual", 1)
+    st = task02.Student("Mashaev", "Nikita")
+    hw = task02.Homework("Actual", 1)
     hw_res = st.do_homework(hw, "2 + 2 = 4")
-    assert Teacher.check_homework(hw_res)
-    assert hw_res.homework in Teacher.homework_done.keys()
+    assert task02.Teacher.check_homework(hw_res)
+    assert hw_res.homework in task02.Teacher.homework_done.keys()
 
 
 def test_check_same():
-    st = Student("Mashaev", "Nikita")
-    hw = Homework("Actual", 1)
+    st = task02.Student("Mashaev", "Nikita")
+    hw = task02.Homework("Actual", 1)
     hw_res = st.do_homework(hw, "2 + 2 = 4")
-    assert len(Teacher.homework_done[hw]) == 0
-    Teacher.check_homework(hw_res)
-    assert len(Teacher.homework_done[hw]) == 1
-    Teacher.check_homework(hw_res)
-    assert len(Teacher.homework_done[hw]) == 1
+    assert len(task02.Teacher.homework_done[hw]) == 0
+    task02.Teacher.check_homework(hw_res)
+    assert len(task02.Teacher.homework_done[hw]) == 1
+    task02.Teacher.check_homework(hw_res)
+    assert len(task02.Teacher.homework_done[hw]) == 1
 
 
 def test_reject_pass():
-    st = Student("Mashaev", "Nikita")
-    hw = Homework("Actual", 1)
+    st = task02.Student("Mashaev", "Nikita")
+    hw = task02.Homework("Actual", 1)
     hw_res = st.do_homework(hw, "2=2")
-    assert not Teacher.check_homework(hw_res)
-    assert not hw_res.homework in Teacher.homework_done.keys()
+    assert not task02.Teacher.check_homework(hw_res)
+    assert not hw_res.homework in task02.Teacher.homework_done.keys()
 
 
 def test_reset_results_delete_hw_done_if_nothing_given():
-    Teacher.homework_done = defaultdict(list)
-    st = Student("Mashaev", "Nikita")
-    hw1 = Homework("hw1", 1)
-    hw2 = Homework("hw2", 2)
+    task02.Teacher.homework_done = defaultdict(list)
+    st = task02.Student("Mashaev", "Nikita")
+    hw1 = task02.Homework("hw1", 1)
+    hw2 = task02.Homework("hw2", 2)
     hw_res1 = st.do_homework(hw1, "2 + 2 = 4")
     hw_res2 = st.do_homework(hw2, "Green Gauss gradient approach")
-    Teacher.check_homework(hw_res1)
-    Teacher.check_homework(hw_res2)
-    assert len(Teacher.homework_done) == 2
-    Teacher.reset_results()
-    assert len(Teacher.homework_done) == 0
+    task02.Teacher.check_homework(hw_res1)
+    task02.Teacher.check_homework(hw_res2)
+    assert len(task02.Teacher.homework_done) == 2
+    task02.Teacher.reset_results()
+    assert len(task02.Teacher.homework_done) == 0
 
 
 def test_reset_results_delete_def_hw():
-    Teacher.homework_done = defaultdict(list)
-    st = Student("Mashaev", "Nikita")
-    hw1 = Homework("hw1", 1)
-    hw2 = Homework("hw2", 2)
+    task02.Teacher.homework_done = defaultdict(list)
+    st = task02.Student("Mashaev", "Nikita")
+    hw1 = task02.Homework("hw1", 1)
+    hw2 = task02.Homework("hw2", 2)
     hw_res11 = st.do_homework(hw1, "2 + 2 = 4")
     hw_res12 = st.do_homework(hw1, "2+2=4 ")
     hw_res2 = st.do_homework(hw2, "Green Gauss gradient approach")
-    Teacher.check_homework(hw_res11)
-    Teacher.check_homework(hw_res12)
-    Teacher.check_homework(hw_res2)
-    assert len(Teacher.homework_done) == 2
-    Teacher.reset_results(hw1)
-    assert len(Teacher.homework_done) == 1
-    assert len(Teacher.homework_done[hw1]) == 0
+    task02.Teacher.check_homework(hw_res11)
+    task02.Teacher.check_homework(hw_res12)
+    task02.Teacher.check_homework(hw_res2)
+    assert len(task02.Teacher.homework_done) == 2
+    task02.Teacher.reset_results(hw1)
+    assert len(task02.Teacher.homework_done) == 1
+    assert len(task02.Teacher.homework_done[hw1]) == 0
