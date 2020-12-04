@@ -1,4 +1,5 @@
 # I decided to write a code that generates data filtering object from a list of keyword parameters:
+from typing import Any, Callable
 
 
 class Filter:
@@ -7,10 +8,10 @@ class Filter:
     functions that return True if object in list conforms to some criteria
     """
 
-    def __init__(self, functions):
+    def __init__(self, functions: Callable[[Any], Any]):
         self.functions = functions
 
-    def apply(self, data):
+    def apply(self, data: Any):
         return [item for item in data if all(i(item) for i in self.functions)]
 
 
@@ -19,9 +20,11 @@ class Filter:
 # positive_even.apply(range(100)) should return only even numbers from 0 to 99
 
 
-def make_filter(**keywords):
+def make_filter(**keywords: Any):
     """
     Generate filter object for specified keywords
+
+    :param keywords: key for filter creation
     """
     filter_funcs = []
     for key, value in keywords.items():

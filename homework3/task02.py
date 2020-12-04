@@ -17,7 +17,15 @@ def slow_calculate(value: int) -> int:
 def perform_calculate(
     start: int = 0, end: int = 500, step: int = 1
 ) -> Tuple[float, int]:
+    """
+    Designed to fast compute a sum of large number of
+    function "slow_calculate" calls result
 
+    :param start: first value of argument
+    :param end: last value of argument(not included in range)
+    :param step: increment
+    :return: elapsed time and total sum
+    """
     init_list = [i for i in range(start, end, step)]
     time_start = time.time()
     with Pool(end - start) as p:

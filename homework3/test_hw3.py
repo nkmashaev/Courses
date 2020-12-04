@@ -1,4 +1,5 @@
 from typing import List
+from unittest import mock
 
 import pytest
 
@@ -9,30 +10,29 @@ from homework3.task04 import is_armstrong
 
 
 # task01 tests
-def test_cache_true():
+def test_cache_only_cached():
     times_var = 3
+    m = mock.Mock()
+    n = m
+    m = cache(times_var)(m)
+    for i in range(times_var):
+        m(1, 2, 3, [4, 5, 6], key=2)
+    assert n.call_count == 1
+    assert n.call_args_list == [((1, 2, 3, [4, 5, 6]), {"key": 2})]
 
-    @cache(times=times_var)
-    def func_for_test(a: int, b: int) -> List[int]:
-        return a ** b ** 2
 
-    res = func_for_test(100, 200)
-    assert all([func_for_test(100, 200) is res for i in range(times_var)]) is True
-
-
-@pytest.mark.parametrize(
-    ["times", "val"],
-    [[1, 3], [2, 5], [3, 10]],
-)
-def test_cache_false(times, val):
+def test_cache_recache():
     times_var = 3
-
-    @cache(times=times_var)
-    def func_for_test(a: int, b: int) -> List[int]:
-        return a ** b ** 2
-
-    res = func_for_test(100, 200)
-    assert all([func_for_test(100, 200) is res for i in range(2 * times_var)]) is False
+    m = mock.Mock()
+    n = m
+    m = cache(times_var)(m)
+    for i in range(times_var * 2):
+        m(1, 2, 3, [4, 5, 6], key=2)
+    assert n.call_count == 2
+    assert n.call_args_list == [
+        ((1, 2, 3, [4, 5, 6]), {"key": 2}),
+        ((1, 2, 3, [4, 5, 6]), {"key": 2}),
+    ]
 
 
 # task02 tests
@@ -85,27 +85,7 @@ def test_make_filter(kwargs, data, expected):
     [
         [1],
         [2],
-        [3],
-        [4],
-        [5],
-        [6],
-        [7],
-        [8],
-        [9],
-        [153],
-        [370],
-        [371],
-        [407],
-        [1634],
-        [8208],
         [9474],
-        [54748],
-        [92727],
-        [93084],
-        [548834],
-        [1741725],
-        [4210818],
-        [9800817],
         [9926315],
     ],
 )
@@ -118,27 +98,7 @@ def test_is_armstrong_true(armstrong_numb):
     ["not_armstrong"],
     [
         [15],
-        [35],
-        [936],
-        [34],
-        [18],
         [2592],
-        [800],
-        [900],
-        [990],
-        [501],
-        [341],
-        [999],
-        [253],
-        [807],
-        [42925],
-        [2395932],
-        [243249223],
-        [32939492],
-        [8943247],
-        [23592034283],
-        [2482384],
-        [75462],
         [929348],
         [99432842123],
     ],

@@ -1,10 +1,11 @@
-from functools import reduce
-
-
 def is_armstrong(number: int) -> bool:
+    """
+    Define is the number is Armstrong one
+
+    :param number: number to check
+    :return: True if number is Armstrong else false
+    """
     digit_list = [int(x) for x in str(number)]
     n = len(digit_list)
-    first_digit, digit_list[0] = digit_list[0], 0
-    armstrong_sum = reduce(lambda x, y: x + y ** n, digit_list)
-    armstrong_sum += first_digit ** n
+    armstrong_sum = sum([x ** n for x in digit_list])
     return armstrong_sum == number
