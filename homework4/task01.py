@@ -1,8 +1,7 @@
-import os
-
 """
 Implemenation of the first task of homework4. 
 """
+import os
 
 
 def read_magic_numb(path: str) -> bool:

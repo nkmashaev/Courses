@@ -1,4 +1,5 @@
 import urllib.request
+from urllib.error import HTTPError
 
 
 def count_dots_on_i(url: str) -> int:
@@ -12,16 +13,13 @@ def count_dots_on_i(url: str) -> int:
     :raise: ValueError
     """
 
-    web_url = urllib.request.urlopen(url)
-    if web_url.getcode() != 200:
-        raise ValueError(f"Unreachable {url}")
-
-    counter = 0
-    for line in web_url.read().decode():
-        for char in line:
-            if char == "i":
-                counter += 1
-    return counter
+    try:
+        return sum(
+            sum(1 for char in line.decode() if char == "i")
+            for line in urllib.request.urlopen(url)
+        )
+    except HTTPError as e:
+        raise ValueError(f"Unreachable {url}") from e
 
 
 if __name__ == "__main__":

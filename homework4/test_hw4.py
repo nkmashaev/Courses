@@ -1,5 +1,8 @@
 import os
-from unittest.mock import patch
+import sys
+import urllib.request
+from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError
 
 import pytest
 
@@ -9,18 +12,15 @@ from homework4.task01 import read_magic_numb
 from homework4.task02 import count_dots_on_i
 from homework4.task03 import my_precios_logger
 
-# task01 tests
-test_task01_fname = os.path.join(".", "test_task01_data.txt")
-
 
 @pytest.fixture
-def prepare_test_dir():
-    yield
-    if os.path.exists(test_task01_fname):
-        os.remove(test_task01_fname)
+def temp_file_creation():
+    test_file_name = ".test_file"
+    yield test_file_name
+    if os.path.exists(test_file_name):
+        os.remove(test_file_name)
 
 
-@pytest.mark.usefixtures("prepare_test_dir")
 @pytest.mark.parametrize(
     "numb",
     [
@@ -32,13 +32,12 @@ def prepare_test_dir():
         2.99,
     ],
 )
-def test_read_magic_numb_true(numb):
-    with open(test_task01_fname, "w") as in_file:
+def test_read_magic_numb_true(temp_file_creation, numb):
+    with open(temp_file_creation, "w") as in_file:
         in_file.write(f"{numb:.11E}")
-    assert read_magic_numb(test_task01_fname) is True
+    assert read_magic_numb(temp_file_creation) is True
 
 
-@pytest.mark.usefixtures("prepare_test_dir")
 @pytest.mark.parametrize(
     "numb",
     [
@@ -50,13 +49,12 @@ def test_read_magic_numb_true(numb):
         3.5,
     ],
 )
-def test_read_magic_numb_false(numb):
-    with open(test_task01_fname, "w") as in_file:
+def test_read_magic_numb_false(temp_file_creation, numb):
+    with open(temp_file_creation, "w") as in_file:
         in_file.write(f"{numb:.11E}")
-    assert read_magic_numb(test_task01_fname) is False
+    assert read_magic_numb(temp_file_creation) is False
 
 
-@pytest.mark.usefixtures("prepare_test_dir")
 @pytest.mark.parametrize(
     "non_int",
     [
@@ -65,11 +63,11 @@ def test_read_magic_numb_false(numb):
         "",
     ],
 )
-def test_read_magic_numb_val_exception(non_int):
-    with open(test_task01_fname, "w") as in_file:
+def test_read_magic_numb_val_exception(temp_file_creation, non_int):
+    with open(temp_file_creation, "w") as in_file:
         in_file.write(f"{non_int}")
-    with pytest.raises(ValueError):
-        read_magic_numb(test_task01_fname)
+    with pytest.raises(ValueError, match="could not convert string to float: "):
+        read_magic_numb(temp_file_creation)
 
 
 def test_read_magic_numb_file_not_exists():
@@ -78,33 +76,30 @@ def test_read_magic_numb_file_not_exists():
 
 
 # task02 tests
-class Dummy_html:
-    def __init__(self, data: str, code: int):
-        self.__code__ = code
-        self.__data__ = data.encode()
-
-    def getcode(self):
-        return self.__code__
-
-    def read(self):
-        return self.__data__
-
-
-@patch("urllib.request.urlopen")
-def test_count_dots_on_i_data(mock_url):
-    url = "https://example.com/"
-    mock_url.return_value = Dummy_html("i" * 59, 200)
-    ans = count_dots_on_i(url)
-    assert ans == 59
+def test_count_dots_on_i_data(monkeypatch):
+    monkeypatch.setattr(
+        urllib.request,
+        "urlopen",
+        MagicMock(
+            return_value=[
+                b"<html>",
+                b"<head>iii</head>",
+                b"<body>qqq</body>",
+                b"</html>",
+            ]
+        ),
+    )
+    assert count_dots_on_i("https://200") == 3
 
 
-@patch("urllib.request.urlopen")
-def test_count_dots_on_i_not_connection(mock_url):
-    url = "https://example.com/"
-    mock_url.return_value = Dummy_html("error code", 500)
-    with pytest.raises(ValueError) as execinfo:
-        ans = count_dots_on_i("https://example.com/")
-    assert str(execinfo.value) == f"Unreachable {url}"
+def test_count_dots_on_i_not_connection(monkeypatch):
+    monkeypatch.setattr(
+        urllib.request,
+        "urlopen",
+        MagicMock(side_effect=HTTPError(404, "NF", "", "", "")),
+    )
+    with pytest.raises(ValueError, match="Unreachable https://404"):
+        count_dots_on_i("https://404")
 
 
 # task03 tests
@@ -119,7 +114,7 @@ def test_my_precios_logger_stderr(capfd):
     my_precios_logger("error: log is empty")
     stdout, stderr = capfd.readouterr()
     assert stdout == ""
-    assert stderr == "error: log is empty\n"
+    assert stderr.endswith("error: log is empty\n")
 
 
 # task04 tests
