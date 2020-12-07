@@ -3,23 +3,12 @@ from typing import Any, Callable
 
 
 def origfunc(orig_func):
-    def decorator(func):
-        class FuncSaver:
-            def __init__(self, orig, wrapper):
-                self.__original_func = orig
-                self.__wrapper = wrapper
-                functools.update_wrapper(self, orig)
+    def save_func(func):
+        setattr(func, "__original_func", orig_func)
+        functools.update_wrapper(wrapper=func, wrapped=orig_func)
+        return func
 
-            def __call__(self, *args, **kwargs):
-                return self.__wrapper(*args, **kwargs)
-
-            @property
-            def original_func(self):
-                return self.__original_func
-
-        return FuncSaver(orig_func, func)
-
-    return decorator
+    return save_func
 
 
 def print_result(func):
@@ -51,7 +40,6 @@ if __name__ == "__main__":
     custom_sum(1, 2, 3, 4)
     print(custom_sum.__doc__)
     print(custom_sum.__name__)
-    without_print = custom_sum.original_func
     # the result returns without printing
-    without_print(1, 2, 3, 4)
     without_print = custom_sum.__original_func
+    without_print(1, 2, 3, 4)

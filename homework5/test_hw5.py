@@ -123,21 +123,8 @@ def test_print_result_origfunc(capfd):
     def test_func_sum(*args):
         return functools.reduce(lambda x, y: x + y, args)
 
-    orig = test_func_sum.original_func
+    orig = test_func_sum.__original_func
     assert orig(1, 9, 2, 8, 3, 7, 4, 6, 5) == 45
     stdout, stderr = capfd.readouterr()
     assert stdout == ""
     assert stderr == ""
-
-
-# Raises exception if private member called
-def test_print_result_call_to_private():
-    @print_result
-    def test_func():
-        pass
-
-    with pytest.raises(AttributeError) as execinfo:
-        orig = test_func.__original_func
-    assert (
-        str(execinfo.value) == "'FuncSaver' object has no attribute '__original_func'"
-    )
