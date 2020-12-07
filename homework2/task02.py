@@ -46,34 +46,15 @@ def major_and_minor_elem_2(inp: List) -> Tuple[int, int]:
     :param inp: array of elements
     :return: most and least common elements tuple
     """
+    numbers_dict = defaultdict(int)
 
-    sort_list = sorted(inp)
-    min_numb = 1
-    maj_numb = 1
-    curr_el = sort_list[0]
-    minor = curr_el
-    major = curr_el
-    curr_numb = 1
+    for x in inp:
+        numbers_dict[x] += 1
 
-    for x in sort_list[1:]:
-        if x != curr_el:
-            if min_numb > curr_numb:
-                min_numb = curr_numb
-                minor = curr_el
-            if maj_numb < curr_numb:
-                max_numb = curr_numb
-                major = curr_el
-            curr_numb = 0
-            curr_el = x
-        curr_numb += 1
-
-    if min_numb > curr_numb:
-        min_numb = curr_numb
-        minor = curr_el
-    if maj_numb < curr_numb:
-        max_numb = curr_numb
-        major = curr_el
-    return major, minor
+    sorted(numbers_dict.items(), key=lambda kv: kv[1])
+    minor = list(numbers_dict.keys())[0]
+    major = list(numbers_dict.keys())[-1]
+    return minor, major
 
 
 if __name__ == "__main__":
