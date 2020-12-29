@@ -19,15 +19,16 @@ example_tree = {
 }
 
 
-def find_occurances(tree: dict, element: Any) -> int:
+def find_occurences(tree: dict, element: Any) -> int:
     elements_dict = defaultdict(int)
 
     def rec_counter(storage):
         if isinstance(storage, (int, str, bool)):
             elements_dict[storage] += 1
         elif isinstance(storage, dict):
-            for i in storage.values():
-                rec_counter(i)
+            for key, val in storage.items():
+                rec_counter(key)
+                rec_counter(val)
         else:
             for i in storage:
                 rec_counter(i)
