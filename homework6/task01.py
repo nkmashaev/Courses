@@ -1,26 +1,26 @@
 def instances_counter(cls):
-    class WithCounter(cls):
-        """
-        With Counter
-        """
+    cls.instance_counter = 0
+    cls_init = cls.__init__
 
-        numb_of_inst = 0
+    def cls_init_with_counter(self, *args, **kwargs):
+        cls_init(self, *args, **kwargs)
+        self.__class__.instance_counter += 1
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.__class__.numb_of_inst += 1
+    @classmethod
+    def get_created_instances(cls):
+        return cls.instance_counter
 
-        @classmethod
-        def get_created_instances(cls):
-            return cls.numb_of_inst
+    @classmethod
+    def reset_instances_counter(cls):
+        res = cls.instance_counter
+        cls.instance_counter = 0
+        return res
 
-        @classmethod
-        def reset_instances_counter(cls):
-            to_return, cls.numb_of_inst = cls.numb_of_inst, 0
-            return to_return
+    cls.__init__ = cls_init_with_counter
+    cls.get_created_instances = get_created_instances
+    cls.reset_instances_counter = reset_instances_counter
 
-    WithCounter.__doc__ = cls.__doc__
-    return WithCounter
+    return cls
 
 
 @instances_counter
