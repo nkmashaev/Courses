@@ -6,7 +6,6 @@ from typing import Any, Callable
 class TableData:
     def __init__(self, database_name: str, table_name: str):
         self.database_name = os.path.join(os.path.dirname(__file__), database_name)
-        # self.database_name = os.path.join(".", database_name)
         self.table_name = table_name
 
     def __get_cursor(self):

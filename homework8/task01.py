@@ -1,13 +1,13 @@
-from typing import Any
+from typing import Union
 
 
 def is_integer(str_to_check: str) -> bool:
     try:
-        float(str_to_check)
+        int(str_to_check)
     except ValueError:
         return False
     else:
-        return float(str_to_check).is_integer()
+        return True
 
 
 class KeyValueStorage:
@@ -29,8 +29,8 @@ class KeyValueStorage:
                 if not key in KeyValueStorage.__dict__:
                     self.__storage[key] = val
 
-    def __getitem__(self, key: Any) -> Any:
+    def __getitem__(self, key: str) -> Union[str, int]:
         return self.__storage[key]
 
-    def __getattr__(self, key: str) -> Any:
+    def __getattr__(self, key: str) -> Union[str, int]:
         return self.__storage[key]
