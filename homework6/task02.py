@@ -7,21 +7,19 @@ class DeadlineError(Exception):
 
 
 class Homework:
-    __slots__ = ("__text", "__deadline", "__created")
-
     def __init__(self, text: str, days: int):
         self.__text = text
         self.__created = datetime.datetime.now()
         self.__deadline = self.created + datetime.timedelta(days=days)
 
     @property
-    def deadline(self):
+    def deadline(self) -> str:
         if self.is_active():
             return str(self.__deadline - datetime.datetime.now())
         return str(datetime.timedelta(days=0))
 
     @property
-    def text(self):
+    def text(self) -> str:
         return self.__text
 
     @property
@@ -86,6 +84,6 @@ class Teacher(Person):
     @classmethod
     def reset_results(cls, hw=None):
         if isinstance(hw, Homework):
-            del cls.homework_done[hw]
+            cls.homework_done.pop(hw)
         else:
-            cls.homework_done = defaultdict(list)
+            cls.homework_done.clear()
