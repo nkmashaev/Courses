@@ -9,17 +9,16 @@ class Suppressor:
     def __enter__(self):
         pass
 
-    def __exit__(
-        self, exception_type: type, exception_value: Exception, traceback: TracebackType
-    ):
-        return isinstance(exception_value, self.suppressed_exception)
+    def __exit__(self, exctype, excinst, exctb):
+        return exctype is not None and issubclass(self.suppressed_exception, exctype)
 
 
 @contextmanager
-def suppressor(supressed_exc: Exception):
+def suppressor(ex: Exception):
     try:
         yield
-    except supressed_exc:
+    except ex:
         pass
-    finally:
-        pass
+    except Exception as some_ex:
+        if not issubclass(ex, type(some_ex)):
+            raise (some_ex)

@@ -8,24 +8,6 @@ import homework9.task02 as task02
 import homework9.task03 as task03
 
 
-# test task1
-def test_get_data_path_file_not_exists_str_path():
-    with pytest.raises(AttributeError, match="Error: Path not exists"):
-        next(task01.get_data("not_exist"))
-        next(task01.get_data(Path("not_exists")))
-
-
-def test_get_data_path_not_file(tmpdir):
-    with pytest.raises(AttributeError, match="Error: Expected file name"):
-        next(task01.get_data(str(tmpdir)))
-        next(task01.get_data(Path(str(tmpdir))))
-
-
-def test_get_data_not_str_or_path_passed():
-    with pytest.raises(AttributeError, match="Error: Expected str or Path"):
-        next(task01.get_data(5))
-
-
 @pytest.mark.parametrize(
     "files_data",
     [
@@ -43,6 +25,14 @@ def test_merge_sorted_files(tmpdir, files_data):
 
 
 # test task2
+@pytest.fixture
+def MyTestExp():
+    class MyExp(ZeroDivisionError):
+        pass
+
+    return MyExp
+
+
 def test_suppressor_class_suppress():
     with task02.Suppressor(IndexError):
         assert [0][1]
@@ -52,6 +42,28 @@ def test_suppressor_class_wrong_exception():
     with pytest.raises(IndexError):
         with task02.Suppressor(AttributeError):
             [0][1]
+
+
+def test_suppressor_class_suppress_inheritance(MyTestExp):
+    with task02.Suppressor(MyTestExp):
+        assert 1 / 0
+
+
+def test_suppressor_class_inheritance_wrong(MyTestExp):
+    with pytest.raises(IndexError):
+        with task02.Suppressor(MyTestExp):
+            assert [0][1]
+
+
+def test_suppressor_generator_suppress_inheritance(MyTestExp):
+    with task02.suppressor(MyTestExp):
+        assert 1 / 0
+
+
+def test_suppressor_generator_inheritance_wrong(MyTestExp):
+    with pytest.raises(IndexError):
+        with task02.suppressor(MyTestExp):
+            assert [0][1]
 
 
 def test_suppressor_generator_suppress():
